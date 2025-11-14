@@ -73,7 +73,8 @@ for split_name in ["train", "val"]:
     loader = tokenizing_distributed_data_loader(device_batch_size, sequence_len, split_name, device=device)
     with autocast_ctx:
         bpb = evaluate_bpb(model, loader, steps, token_bytes)
-    print0(f"{split_name} bpb: {bpb:.4f}")
+    split_name_cn = "训练集" if split_name == "train" else "验证集"
+    print0(f"{split_name_cn} bpb: {bpb:.4f}")
     bpb_results[split_name] = bpb
 
 # =============================================================================

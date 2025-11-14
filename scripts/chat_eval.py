@@ -130,7 +130,7 @@ def run_generative_eval(task_object, tokenizer, model, engine, num_samples, max_
         num_passed += int(passed)
 
         # 在同一行更新进度（覆盖式打印）
-        print(f"\r\033[KRank {ddp_rank} | {num_passed}/{total} ({100*num_passed/total:.2f}%)", end='', flush=True)
+        print(f"\r\033[K进程 {ddp_rank} | {num_passed}/{total} ({100*num_passed/total:.2f}%)", end='', flush=True)
 
     # 完成进度行后换行
     print()
@@ -145,7 +145,7 @@ def run_generative_eval(task_object, tokenizer, model, engine, num_samples, max_
         total = total_tensor.item()
 
     print0("=" * 50)
-    print0(f"Final: {num_passed}/{total} ({100*num_passed/total:.2f}%)")
+    print0(f"最终结果: {num_passed}/{total} ({100*num_passed/total:.2f}%)")
 
     # 返回准确率
     return num_passed/total
@@ -243,7 +243,7 @@ def run_categorical_eval(task_object, tokenizer, model, batch_size, max_problems
         total = total_tensor.item()
 
     average = num_passed/total
-    print0(f"Final: {num_passed}/{total} ({100*average:.2f}%)")
+    print0(f"最终结果: {num_passed}/{total} ({100*average:.2f}%)")
     return average
 
 # =============================================================================
@@ -358,7 +358,7 @@ if __name__ == "__main__":
                 max_problems=args.max_problems,
             )
             results[task_name] = acc
-            print0(f"{task_name} accuracy: {100 * acc:.2f}%")
+            print0(f"{task_name} 准确率: {100 * acc:.2f}%")
 
     # ============= 计算 ChatCORE 综合指标 =============
     from nanochat.report import get_report

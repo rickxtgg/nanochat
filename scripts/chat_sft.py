@@ -210,12 +210,12 @@ def sft_data_generator(dataset, batch_size):
 # 梯度累积计算
 # =============================================================================
 examples_per_step = device_batch_size * ddp_world_size
-print0(f"Target examples per step: {target_examples_per_step}")
-print0(f"Device batch size: {device_batch_size}")
-print0(f"Examples per step is device_batch_size * ddp_world_size: {examples_per_step}")
+print0(f"目标每步样本数: {target_examples_per_step}")
+print0(f"设备批次大小: {device_batch_size}")
+print0(f"实际每步样本数 (device_batch_size * ddp_world_size): {examples_per_step}")
 assert target_examples_per_step % examples_per_step == 0, "目标每步样本数必须能被实际每步样本数整除"
 grad_accum_steps = target_examples_per_step // examples_per_step
-print0(f"=> Setting grad accum steps: {grad_accum_steps}")
+print0(f"=> 设置梯度累积步数: {grad_accum_steps}")
 
 # =============================================================================
 # 训练迭代次数计算
@@ -277,7 +277,7 @@ for step in range(num_iterations):
         if ddp:
             dist.all_reduce(val_loss, op=dist.ReduceOp.AVG)  # 多卡平均
         val_loss = val_loss.item()
-        print0(f"Step {step:05d} | Validation loss: {val_loss:.6f}")
+        print0(f"步数 {step:05d} | 验证损失: {val_loss:.6f}")
         wandb_run.log({
             "step": step,
             "val_loss": val_loss,
@@ -294,7 +294,7 @@ for step in range(num_iterations):
             metrics["mmlu_acc"] = run_chat_eval("MMLU", model, tokenizer, engine, batch_size=device_batch_size*2, max_problems=eval_metrics_max_problems)
             metrics["arc_easy_acc"] = run_chat_eval("ARC-Easy", model, tokenizer, engine, batch_size=device_batch_size*2, max_problems=eval_metrics_max_problems)
         metrics_str = ', '.join(f'{k}: {v:.6f}' for k, v in metrics.items())
-        print0(f"Step {step:05d} | {metrics_str}")
+        print0(f"步数 {step:05d} | {metrics_str}")
         wandb_run.log({
             "step": step,
             **metrics,
@@ -331,7 +331,7 @@ for step in range(num_iterations):
     # ============= 日志记录 =============
     train_loss_item = train_loss.item()
     num_tokens_item = num_tokens.item()
-    print0(f"Step {step:05d}/{num_iterations:05d} | Training loss: {train_loss_item:.6f}| lrm: {lrm:.6f}| num_tokens: {num_tokens_item:,}")
+    print0(f"步数 {step:05d}/{num_iterations:05d} | 训练损失: {train_loss_item:.6f} | 学习率倍数: {lrm:.6f} | token数: {num_tokens_item:,}")
     wandb_run.log({
         "step": step,
         "lrm": lrm,
@@ -361,7 +361,7 @@ if master_process:
             "model_config": model_config_kwargs,
         }
     )
-    print(f"✅ Saved model checkpoint to {checkpoint_dir}")
+    print(f"✅ 已保存模型检查点到 {checkpoint_dir}")
 
 # =============================================================================
 # 记录到实验报告

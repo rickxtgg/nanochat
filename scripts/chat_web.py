@@ -177,7 +177,7 @@ class WorkerPool:
             model_tag: 模型标签
             step: 检查点步数
         """
-        print(f"Initializing worker pool with {self.num_gpus} GPUs...")
+        print(f"正在初始化Worker池，使用 {self.num_gpus} 个GPU...")
         if self.num_gpus > 1:
             assert device_type == "cuda", "只有CUDA支持多GPU。CPU/MPS不支持。"
 
@@ -185,10 +185,10 @@ class WorkerPool:
 
             if device_type == "cuda":
                 device = torch.device(f"cuda:{gpu_id}")
-                print(f"Loading model on GPU {gpu_id}...")
+                print(f"正在GPU {gpu_id}上加载模型...")
             else:
                 device = torch.device(device_type)  # CPU或MPS
-                print(f"Loading model on {device_type}...")
+                print(f"正在{device_type}上加载模型...")
 
             # 在指定设备上加载模型
             model, tokenizer, _ = load_model(source, device, phase="eval", model_tag=model_tag, step=step)
@@ -206,7 +206,7 @@ class WorkerPool:
             self.workers.append(worker)
             await self.available_workers.put(worker)  # 标记为可用
 
-        print(f"All {self.num_gpus} workers initialized!")
+        print(f"所有 {self.num_gpus} 个Worker已初始化完成！")
 
     async def acquire_worker(self) -> Worker:
         """
@@ -271,7 +271,7 @@ def validate_chat_request(request: ChatRequest):
         if msg_length > MAX_MESSAGE_LENGTH:
             raise HTTPException(
                 status_code=400,
-                detail=f"Message {i} is too long. Maximum {MAX_MESSAGE_LENGTH} characters allowed per message"
+                detail=f"消息{i}太长，每条消息最多允许{MAX_MESSAGE_LENGTH}个字符"
             )
         total_length += msg_length
 
@@ -325,10 +325,10 @@ async def lifespan(app: FastAPI):
     在启动时：加载所有GPU上的模型
     在关闭时：清理资源（通过yield后的代码，本例中无需显式清理）
     """
-    print("Loading nanochat models across GPUs...")
+    print("正在跨GPU加载nanochat模型...")
     app.state.worker_pool = WorkerPool(num_gpus=args.num_gpus)
     await app.state.worker_pool.initialize(args.source, model_tag=args.model_tag, step=args.step)
-    print(f"Server ready at http://localhost:{args.port}")
+    print(f"服务器就绪，访问地址: http://localhost:{args.port}")
     yield  # 应用运行期间
     # 这里可以添加清理代码（如果需要）
 
@@ -605,7 +605,7 @@ async def stats():
 # =============================================================================
 if __name__ == "__main__":
     import uvicorn
-    print(f"Starting NanoChat Web Server")
-    print(f"Temperature: {args.temperature}, Top-k: {args.top_k}, Max tokens: {args.max_tokens}")
+    print(f"正在启动 NanoChat Web 服务器")
+    print(f"温度参数: {args.temperature}，Top-k: {args.top_k}，最大token数: {args.max_tokens}")
     # 启动Uvicorn ASGI服务器
     uvicorn.run(app, host=args.host, port=args.port)

@@ -125,7 +125,7 @@ engine = Engine(model, tokenizer)  # 用于采样rollouts
 train_task = GSM8K(subset="main", split="train")  # GSM8K训练集（约7.5K问题）
 val_task = GSM8K(subset="main", split="test")  # GSM8K测试集（约1.3K问题）
 num_steps = (len(train_task) // examples_per_step) * num_epochs
-print0(f"Calculated number of steps: {num_steps}")
+print0(f"计算得到的训练步数: {num_steps}")
 
 # =============================================================================
 # Rollout生成器 - 生成训练批次
@@ -317,10 +317,10 @@ def get_lr_multiplier(it):
     return lrm
 
 # ============= 计算每个进程处理的样本数 =============
-print0(f"Total sequences per step: {examples_per_step * num_samples}")  # 每步总序列数
+print0(f"每步总序列数: {examples_per_step * num_samples}")  # 每步总序列数
 assert examples_per_step % ddp_world_size == 0, "每步样本数必须能被进程数整除"
 examples_per_rank = examples_per_step // ddp_world_size  # 每个GPU处理的样本数
-print0(f"Calculated examples per rank: {examples_per_rank}")
+print0(f"每个进程的样本数: {examples_per_rank}")
 
 # ============= 开始训练循环！=============
 batch_iterator = get_batch()
@@ -349,7 +349,7 @@ for step in range(num_steps):
         
         # 打印和记录结果
         print_passk = [f"Pass@{k}: {passk[k - 1].item():.4f}" for k in range(1, device_batch_size + 1)]
-        print0(f"Step {step} | {', '.join(print_passk)}")
+        print0(f"步数 {step} | {', '.join(print_passk)}")
         log_passk = {f"pass@{k}": passk[k - 1].item() for k in range(1, device_batch_size + 1)}
         wandb_run.log({
             "step": step,
@@ -399,7 +399,7 @@ for step in range(num_steps):
             loss = -pg_obj
             loss.backward()  # 反向传播累积梯度
             
-            print0(f"Step {step}/{num_steps} | Example step {example_step} | Pass {pass_idx} | loss: {loss.item():.6f} | Average reward: {rewards.mean().item()}")
+            print0(f"步数 {step}/{num_steps} | 样本步数 {example_step} | 批次 {pass_idx} | 损失: {loss.item():.6f} | 平均奖励: {rewards.mean().item()}")
         
         # 记录本example的统计信息
         rewards_list.append(rewards_all.mean().item())
@@ -418,7 +418,7 @@ for step in range(num_steps):
         mean_reward = mean_reward_tensor.item()
         mean_sequence_length = mean_sequence_length_tensor.item()
     
-    print0(f"Step {step}/{num_steps} | Average reward: {mean_reward} | Average sequence length: {mean_sequence_length:.2f}")
+    print0(f"步数 {step}/{num_steps} | 平均奖励: {mean_reward} | 平均序列长度: {mean_sequence_length:.2f}")
     wandb_run.log({
         "step": step,
         "reward": mean_reward,
@@ -459,7 +459,7 @@ for step in range(num_steps):
                 "model_config": model_config_kwargs,
             }
         )
-        print(f"✅ Saved model checkpoint to {checkpoint_dir}")
+        print(f"✅ 已保存模型检查点到 {checkpoint_dir}")
 
 # =============================================================================
 # 训练完成：记录到实验报告

@@ -55,9 +55,9 @@ parser.add_argument('--max_chars', type=int, default=10_000_000_000, help='最�
 parser.add_argument('--doc_cap', type=int, default=10_000, help='每个文档的最大字符数（默认：10,000）')
 parser.add_argument('--vocab_size', type=int, default=65536, help='词汇表大小（默认：65536 = 2^16）')
 args = parser.parse_args()
-print(f"max_chars: {args.max_chars:,}")
-print(f"doc_cap: {args.doc_cap:,}")
-print(f"vocab_size: {args.vocab_size:,}")
+print(f"最大字符数: {args.max_chars:,}")
+print(f"文档字符上限: {args.doc_cap:,}")
+print(f"词汇表大小: {args.vocab_size:,}")
 
 # =============================================================================
 # 文本迭代器
@@ -102,7 +102,7 @@ t0 = time.time()
 tokenizer = RustBPETokenizer.train_from_iterator(text_iter, args.vocab_size)
 t1 = time.time()
 train_time = t1 - t0
-print(f"Training time: {train_time:.2f}s")
+print(f"训练时间: {train_time:.2f}秒")
 
 # =============================================================================
 # 保存分词器到磁盘
@@ -150,7 +150,7 @@ token_bytes = torch.tensor(token_bytes, dtype=torch.int32, device='cpu')
 token_bytes_path = os.path.join(tokenizer_dir, "token_bytes.pt")
 with open(token_bytes_path, "wb") as f:
     torch.save(token_bytes, f)
-print(f"Saved token_bytes to {token_bytes_path}")
+print(f"已保存token字节映射到 {token_bytes_path}")
 
 # =============================================================================
 # 记录到实验报告

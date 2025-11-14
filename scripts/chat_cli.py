@@ -85,10 +85,10 @@ engine = Engine(model, tokenizer)
 # =============================================================================
 # 显示欢迎信息
 # =============================================================================
-print("\nNanoChat Interactive Mode")
+print("\nNanoChat 交互模式")
 print("-" * 50)
-print("Type 'quit' or 'exit' to end the conversation")
-print("Type 'clear' to start a new conversation")
+print("输入 'quit' 或 'exit' 结束对话")
+print("输入 'clear' 开始新对话")
 print("-" * 50)
 
 # 初始化对话token序列（从BOS开始）
@@ -108,10 +108,10 @@ while True:
     else:
         # 交互模式：从控制台获取用户输入
         try:
-            user_input = input("\nUser: ").strip()
+            user_input = input("\n用户: ").strip()
         except (EOFError, KeyboardInterrupt):
             # 处理 Ctrl+D 或 Ctrl+C
-            print("\nGoodbye!")
+            print("\n再见！")
             break
 
     # =========================================================================
@@ -119,13 +119,13 @@ while True:
     # =========================================================================
     if user_input.lower() in ['quit', 'exit']:
         # 退出命令
-        print("Goodbye!")
+        print("再见！")
         break
 
     if user_input.lower() == 'clear':
         # 清空对话历史，重新开始
         conversation_tokens = [bos]
-        print("Conversation cleared.")
+        print("对话已清空。")
         continue
 
     if not user_input:
@@ -150,7 +150,7 @@ while True:
         "top_k": args.top_k,  # Top-k采样参数
     }
     response_tokens = []
-    print("\nAssistant: ", end="", flush=True)
+    print("\n助手: ", end="", flush=True)
     
     # 流式生成并显示
     with autocast_ctx:

@@ -124,7 +124,7 @@ model, tokenizer, meta = load_model("base", device, phase="train", model_tag=mod
 pretrain_batch_size = meta.get("device_batch_size", None)
 # 警告：如果当前批次大小大于预训练时的批次大小，可能导致OOM
 if pretrain_batch_size is not None and device_batch_size > pretrain_batch_size:
-    print0(f"FOOTGUN WARNING: base model training used device_batch_size {pretrain_batch_size}, did you pass in a good --device_batch_size to this script?")
+    print0(f"⚠️ 警告: 基础模型训练时使用的批次大小为 {pretrain_batch_size}，请确认你为本脚本传入的 --device_batch_size 参数是否合适？")
 orig_model = model
 model = torch.compile(model, dynamic=False)  # 使用torch.compile加速
 depth = model.config.n_layer
@@ -137,9 +137,9 @@ tokens_per_fwdbwd = device_batch_size * max_seq_len  # 单个进程每次迭代�
 world_tokens_per_fwdbwd = tokens_per_fwdbwd * ddp_world_size  # 所有进程每次迭代的总token数
 assert total_batch_size % world_tokens_per_fwdbwd == 0
 grad_accum_steps = total_batch_size // world_tokens_per_fwdbwd  # 梯度累积步数
-print0(f"Tokens / micro-batch / rank: {device_batch_size} x {max_seq_len} = {tokens_per_fwdbwd:,}")
-print0(f"Tokens / micro-batch: {world_tokens_per_fwdbwd:,}")
-print0(f"Total batch size {total_batch_size:,} => gradient accumulation steps: {grad_accum_steps}")
+print0(f"每个进程每次微批次的token数: {device_batch_size} x {max_seq_len} = {tokens_per_fwdbwd:,}")
+print0(f"所有进程每次微批次的总token数: {world_tokens_per_fwdbwd:,}")
+print0(f"总批次大小 {total_batch_size:,} => 梯度累积步数: {grad_accum_steps}")
 token_bytes = get_token_bytes(device=device)
 
 # =============================================================================
@@ -312,7 +312,7 @@ while True:
         eval_steps = eval_tokens // (device_batch_size * max_seq_len * ddp_world_size)
         with autocast_ctx:
             val_bpb = evaluate_bpb(model, val_loader, eval_steps, token_bytes)
-        print0(f"Step {step:05d} | Validation bpb: {val_bpb:.4f}")
+        print0(f"步数 {step:05d} | 验证集 bpb: {val_bpb:.4f}")
         if val_bpb < min_val_bpb:
             min_val_bpb = val_bpb
         wandb_run.log({
@@ -402,7 +402,7 @@ while True:
     if step > 10:
         total_training_time += dt  # 只计算前10步之后的时间
     
-    print0(f"step {step:05d} ({pct_done:.2f}%) | loss: {debiased_smooth_loss:.6f} | lrm: {lrm:.2f} | dt: {dt * 1000:.2f}ms | tok/sec: {tok_per_sec:,} | mfu: {mfu:.2f} | total time: {total_training_time/60:.2f}m")
+    print0(f"步数 {step:05d} ({pct_done:.2f}%) | 损失: {debiased_smooth_loss:.6f} | 学习率倍数: {lrm:.2f} | 耗时: {dt * 1000:.2f}毫秒 | token/秒: {tok_per_sec:,} | MFU: {mfu:.2f} | 总时间: {total_training_time/60:.2f}分钟")
     
     # 每10步记录到WandB
     if step % 10 == 0:
@@ -420,9 +420,9 @@ while True:
 # =============================================================================
 # 训练完成：打印最终统计信息
 # =============================================================================
-print0(f"Peak memory usage: {get_max_memory() / 1024 / 1024:.2f}MiB")
-print0(f"Total training time: {total_training_time/60:.2f}m")
-print0(f"Minimum validation bpb: {min_val_bpb:.4f}")
+print0(f"峰值内存使用: {get_max_memory() / 1024 / 1024:.2f}MiB")
+print0(f"总训练时间: {total_training_time/60:.2f}分钟")
+print0(f"最低验证集bpb: {min_val_bpb:.4f}")
 
 # =============================================================================
 # 记录到实验报告

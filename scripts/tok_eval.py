@@ -248,10 +248,10 @@ RED = '\033[91m'    # 红色（表示更差）
 RESET = '\033[0m'   # 重置颜色
 
 # 打印词汇表大小
-print(f"\nVocab sizes:")
+print(f"\n词汇表大小:")
 print(f"GPT-2: {vocab_sizes['gpt2']}")
 print(f"GPT-4: {vocab_sizes['gpt4']}")
-print(f"Ours: {vocab_sizes['ours']}")
+print(f"我们的分词器: {vocab_sizes['ours']}")
 
 def print_comparison(baseline_name, baseline_results, ours_results, all_text):
     """
@@ -266,10 +266,10 @@ def print_comparison(baseline_name, baseline_results, ours_results, all_text):
     输出：
         彩色格式化的对比表格
     """
-    print(f"\nComparison with {baseline_name}:")
+    print(f"\n与 {baseline_name} 的对比:")
     print("=" * 95)
-    print(f"{'Text Type':<10} {'Bytes':<8} {baseline_name:<15} {'Ours':<15} {'Relative':<12} {'Better':<10}")
-    print(f"{'':10} {'':8} {'Tokens':<7} {'Ratio':<7} {'Tokens':<7} {'Ratio':<7} {'Diff %':<12}")
+    print(f"{'文本类型':<10} {'字节数':<8} {baseline_name:<15} {'我们的':<15} {'相对差异':<12} {'更优':<10}")
+    print(f"{'':10} {'':8} {'Token数':<7} {'比率':<7} {'Token数':<7} {'比率':<7} {'差异%':<12}")
     print("-" * 95)
 
     for name, text in all_text:
@@ -287,11 +287,11 @@ def print_comparison(baseline_name, baseline_results, ours_results, all_text):
             diff_color = RED
         elif ours_data['ratio'] > baseline_data['ratio']:
             baseline_color, ours_color = RED, GREEN
-            better = "Ours"
+            better = "我们的"
             diff_color = GREEN
         else:
             baseline_color, ours_color = "", ""
-            better = "Tie"
+            better = "平局"
             diff_color = ""
 
         # 打印带颜色的行

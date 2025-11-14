@@ -54,7 +54,7 @@ from nanochat.core_eval import evaluate_task  # 核心评估任务
 # =============================================================================
 
 # CORE 基准测试数据包的下载URL（约162MB）
-EVAL_BUNDLE_URL = "https://karpathy-public.s3.us-west-2.amazonaws.com/eval_bundle.zip"
+EVAL_BUNDLE_URL = "https://modelscope.cn/datasets/rickxt/uv/resolve/master/eval_bundle.zip"
 
 def place_eval_bundle(file_path):
     """
@@ -77,7 +77,7 @@ def place_eval_bundle(file_path):
         # 移动到目标位置
         extracted_bundle_dir = os.path.join(tmpdir, "eval_bundle")
         shutil.move(extracted_bundle_dir, eval_bundle_dir)
-    print0(f"Placed eval_bundle directory at {eval_bundle_dir}")
+    print0(f"已将评估数据包放置到 {eval_bundle_dir}")
 
 def evaluate_model(model, tokenizer, device, max_per_task=-1):
     """
@@ -139,7 +139,7 @@ def evaluate_model(model, tokenizer, device, max_per_task=-1):
             'num_fewshot': task['num_fewshot'][0],
             'continuation_delimiter': task.get('continuation_delimiter', ' ')
         }
-        print0(f"Evaluating: {label} ({task_meta['num_fewshot']}-shot, type: {task_meta['task_type']})... ", end='')
+        print0(f"正在评估: {label} ({task_meta['num_fewshot']}-shot，类型: {task_meta['task_type']})... ", end='')
 
         # 加载任务数据
         data_path = os.path.join(data_base_path, task_meta['dataset_uri'])
@@ -161,7 +161,7 @@ def evaluate_model(model, tokenizer, device, max_per_task=-1):
         centered_result = (accuracy - 0.01 * random_baseline) / (1.0 - 0.01 * random_baseline)
         centered_results[label] = centered_result
         end_time = time.time()
-        print0(f"accuracy: {accuracy:.4f} | centered: {centered_result:.4f} | time: {end_time - start_time:.2f}s")
+        print0(f"准确率: {accuracy:.4f} | 中心化得分: {centered_result:.4f} | 耗时: {end_time - start_time:.2f}秒")
 
     # ============= 计算综合 CORE 指标 =============
     core_metric = sum(centered_results.values()) / len(centered_results)
@@ -225,7 +225,7 @@ def load_hf_model(hf_path: str, device):
     返回：
         (model, tokenizer): 包装后的模型和分词器
     """
-    print0(f"Loading model from: {hf_path}")
+    print0(f"正在从 {hf_path} 加载模型")
     # 加载因果语言模型
     from transformers import AutoModelForCausalLM
     model = AutoModelForCausalLM.from_pretrained(hf_path)
@@ -258,7 +258,7 @@ def main():
     if args.hf_path is not None:
         # 从 HuggingFace 加载模型
         hf_path = args.hf_path
-        print0(f"Loading huggingface model from: {hf_path}")
+        print0(f"正在从 HuggingFace 加载模型: {hf_path}")
         model, tokenizer = load_hf_model(hf_path, device)
         model_name = hf_path  # 用于日志记录
         model_slug = hf_path.replace("/", "-")  # 用于输出文件名
