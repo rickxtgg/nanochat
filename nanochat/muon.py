@@ -237,7 +237,7 @@ class DistMuon(torch.optim.Optimizer):
             
             # 打印分组信息（仅rank 0）
             if rank == 0:
-                print(f"Muon: 分组{len(group_params)}个参数，形状{shape}，设备{device}，类型{dtype}")
+                print(f"Muon: 分组 {len(group_params)} 个参数，形状 {shape}，设备 {device}，类型 {dtype}")
             
             # 创建零缓冲区（用于填充）
             param_groups.append(dict(

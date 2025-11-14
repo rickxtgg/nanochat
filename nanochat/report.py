@@ -497,13 +497,13 @@ class Report:
             else:
                 start_time = None  # 将导致不写入总墙钟时间
                 bloat_data = "[bloat数据缺失]"
-                print(f"警告: {header_file} 不存在。是否忘记运行 `nanochat reset`?")
+                print(f"⚠️ 警告: {header_file} 不存在。是否忘记运行 `nanochat reset`?")
             
             # 处理所有单独的section
             for file_name in EXPECTED_FILES:
                 section_file = os.path.join(report_dir, file_name)
                 if not os.path.exists(section_file):
-                    print(f"警告: {section_file} 不存在，跳过")
+                    print(f"⚠️ 警告: {section_file} 不存在，跳过")
                     continue
                 with open(section_file, "r", encoding="utf-8") as in_file:
                     section = in_file.read()

@@ -124,12 +124,12 @@ def download_single_file(index):
     filename = index_to_filename(index)
     filepath = os.path.join(DATA_DIR, filename)
     if os.path.exists(filepath):
-        print(f"Skipping {filepath} (already exists)")
+        print(f"跳过 {filepath}（已存在）")
         return True
 
     # 构造远程URL
     url = f"{BASE_URL}/{filename}"
-    print(f"Downloading {filename}...")
+    print(f"正在下载 {filename}...")
 
     # 带重试的下载
     max_attempts = 5
@@ -145,11 +145,11 @@ def download_single_file(index):
                         f.write(chunk)
             # 将临时文件移动到最终位置
             os.rename(temp_path, filepath)
-            print(f"Successfully downloaded {filename}")
+            print(f"成功下载 {filename}")
             return True
 
         except (requests.RequestException, IOError) as e:
-            print(f"Attempt {attempt}/{max_attempts} failed for {filename}: {e}")
+            print(f"尝试 {attempt}/{max_attempts} 失败，文件 {filename}: {e}")
             # 清理任何部分文件
             for path in [filepath + f".tmp", filepath]:
                 if os.path.exists(path):
@@ -160,10 +160,10 @@ def download_single_file(index):
             # 指数退避重试：2^attempt秒
             if attempt < max_attempts:
                 wait_time = 2 ** attempt
-                print(f"Waiting {wait_time} seconds before retry...")
+                print(f"等待 {wait_time} 秒后重试...")
                 time.sleep(wait_time)
             else:
-                print(f"Failed to download {filename} after {max_attempts} attempts")
+                print(f"下载 {filename} 失败，已尝试 {max_attempts} 次")
                 return False
 
     return False
@@ -217,4 +217,4 @@ if __name__ == "__main__":
 
     # 统计并报告下载结果
     successful = sum(1 for success in results if success)
-    print(f"完成！成功下载: {successful}/{len(ids_to_download)} 个分片到 {DATA_DIR}")
+    print(f"\n完成！成功下载: {successful}/{len(ids_to_download)} 个分片到 {DATA_DIR}")

@@ -65,7 +65,7 @@ for arg in sys.argv[1:]:
         # 假设这是配置文件的名称（不以--开头）
         assert not arg.startswith('--')
         config_file = arg
-        print0(f"Overriding config with {config_file}:")
+        print0(f"正在使用配置文件覆盖参数: {config_file}")
         with open(config_file) as f:
             print0(f.read())
         # 执行配置文件中的Python代码（会修改全局变量）
@@ -92,7 +92,7 @@ for arg in sys.argv[1:]:
                 assert attempt_type == default_type, f"Type mismatch: {attempt_type} != {default_type}"
             
             # 覆盖全局变量
-            print0(f"Overriding: {key} = {attempt}")
+            print0(f"覆盖参数: {key} = {attempt}")
             globals()[key] = attempt
         else:
-            raise ValueError(f"Unknown config key: {key}")
+            raise ValueError(f"未知的配置键: {key}")
