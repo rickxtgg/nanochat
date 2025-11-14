@@ -1,28 +1,61 @@
 <!DOCTYPE html>
+<!-- 
+  nanochat Logo 生成器
+  
+  功能说明：
+  这是一个简单的HTML页面，用于动态生成 nanochat 项目的 Logo 图形。
+  Logo 由 SVG 图形构成，包含放射状渐变背景和几何图案。
+  
+  设计元素：
+  1. 放射状渐变：从中心的蓝紫色(#667eea)渐变到边缘的紫色(#764ba2)
+  2. 放射线条：12条从圆周向内延伸的线段，形成放射状图案
+  3. 中心菱形：位于圆心的黑色菱形标记
+  
+  使用方法：
+  直接在浏览器中打开此HTML文件，即可查看生成的Logo效果。
+-->
 <html>
 <body style="margin:0; display:flex; justify-content:center; align-items:center; height:100vh; background:#fff">
+  <!-- SVG画布：400x400像素 -->
   <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
     <defs>
+      <!-- 定义放射状渐变：从中心向外渐变 -->
       <radialGradient id="g" cx="50%" cy="50%">
-        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1"/>
-        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0.3"/>
+        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1"/>  <!-- 中心颜色：蓝紫色，不透明 -->
+        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0.3"/>  <!-- 边缘颜色：紫色，半透明 -->
       </radialGradient>
     </defs>
   </svg>
   <script>
+    // JavaScript 代码：动态生成 Logo 图形
     const svg = document.querySelector('svg');
-    const r = 120;
-    let path = '';
+    const r = 120;  // 圆的半径（像素）
+    let path = '';  // 用于存储所有路径的字符串
+    
+    // 生成12条放射状线条（24个点，每2个点为一组）
+    // 每条线从圆周上的一点向内延伸到一个较小的圆上
     for(let i = 0; i < 24; i += 2) {
-      let a1 = i * Math.PI / 12;
-      let a2 = (i + 1) * Math.PI / 12;
+      let a1 = i * Math.PI / 12;  // 当前角度（弧度）
+      let a2 = (i + 1) * Math.PI / 12;  // 下一个角度
+      
+      // 计算外圆上的点坐标（圆周上）
       let x2 = 200 + Math.cos(a2) * r;
       let y2 = 200 + Math.sin(a2) * r;
+      
+      // 计算内圆上的点坐标（距离中心 r-90 像素）
       let x3 = 200 + Math.cos(a2) * (r - 90);
       let y3 = 200 + Math.sin(a2) * (r - 90);
+      
+      // 添加一条从外圆到内圆的线段
       path += `M${x2},${y2} L${x3},${y3} `;
     }
+    
+    // 将生成的放射线条添加到SVG中
+    // 使用渐变描边、6像素宽度、圆角端点
     svg.innerHTML += `<path d="${path}" stroke="url(#g)" stroke-width="6" stroke-linecap="round" fill="none"/>`;
+    
+    // 在中心添加一个黑色菱形标记
+    // 菱形的四个顶点坐标相对于原点(0,0)，然后整体平移到画布中心(200,200)
     svg.innerHTML += `<path d="M200,-12 L212,0 L200,12 L188,0 Z" transform="translate(0,200)" fill="#000"/>`;
   </script>
 </body>
