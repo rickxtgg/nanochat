@@ -384,11 +384,11 @@ output_file = os.path.join(get_base_dir(), "identity_conversations.jsonl")
 # 如果输出文件已存在，先删除以重新开始生成
 if os.path.exists(output_file):
     os.remove(output_file)
-print(f"Saving to {output_file}")
+print(f"正在保存到 {output_file}")
 
 # ============ 并行生成对话 ============
 # 使用线程池执行器(ThreadPoolExecutor)来并行生成多个对话，提高效率
-print(f"Generating {num_conversations} conversations with {num_workers} workers...")
+print(f"正在使用 {num_workers} 个工作线程生成 {num_conversations} 个对话...")
 completed_count = 0  # 成功完成的对话计数
 error_count = 0  # 失败的对话计数
 with ThreadPoolExecutor(max_workers=num_workers) as executor:
@@ -413,15 +413,15 @@ with ThreadPoolExecutor(max_workers=num_workers) as executor:
             with open(output_file, 'a', encoding='utf-8') as f:
                 f.write(json.dumps(messages, ensure_ascii=False) + '\n')
             completed_count += 1
-            print(f"✓ Saved conversation {completed_count}/{num_conversations}")
+            print(f"✓ 已保存对话 {completed_count}/{num_conversations}")
 
         except Exception as e:
             # 捕获并记录任何生成或验证过程中的错误
             error_count += 1
-            print(f"✗ Error generating conversation: {e}")
+            print(f"✗ 生成对话时出错: {e}")
 
 # ============ 生成完成总结 ============
-print(f"\nDone! Successfully saved {completed_count} conversations to {output_file}")
+print(f"\n完成！成功保存 {completed_count} 个对话到 {output_file}")
 if error_count > 0:
-    print(f"Encountered {error_count} errors during generation")
+    print(f"生成过程中遇到 {error_count} 个错误")
 

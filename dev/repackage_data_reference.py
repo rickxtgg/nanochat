@@ -41,7 +41,7 @@ ds = load_dataset(**dataset_kwargs)
 # 打乱可以避免数据的局部相关性，提高模型训练效果
 ds = ds.shuffle(seed=42)
 ndocs = len(ds)  # 获取文档总数
-print(f"Total number of documents: {ndocs}")
+print(f"文档总数: {ndocs}")
 
 # ============ 输出目录设置 ============
 # 指定Parquet文件的输出目录
@@ -106,7 +106,7 @@ for doc in ds:
         remaining_time_hours = remaining_time / 3600
         
         # 输出进度信息
-        print(f"Wrote {shard_path}. #documents: {len(shard_docs)} | #characters: {shard_characters} | time: {dt:.2f}s | remaining time: {remaining_time_hours:.2f}h")
+        print(f"已写入 {shard_path}。文档数: {len(shard_docs)} | 字符数: {shard_characters} | 耗时: {dt:.2f}秒 | 剩余时间: {remaining_time_hours:.2f}小时")
         
         # 重置当前分片的累积变量
         shard_docs = []
