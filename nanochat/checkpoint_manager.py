@@ -76,8 +76,8 @@ def save_checkpoint(checkpoint_dir, step, model_data, optimizer_data, meta_data,
     注意：
         优化器状态在DDP模式下会跨rank分片，所以每个rank必须保存自己的优化器状态。
     """
+    os.makedirs(checkpoint_dir, exist_ok=True)
     if rank == 0:
-        os.makedirs(checkpoint_dir, exist_ok=True)
         # 保存模型状态参数
         model_path = os.path.join(checkpoint_dir, f"model_{step:06d}.pt")
         torch.save(model_data, model_path)
@@ -342,3 +342,4 @@ def load_model(source, *args, **kwargs):
     base_dir = get_base_dir()
     checkpoints_dir = os.path.join(base_dir, model_dir)
     return load_model_from_dir(checkpoints_dir, *args, **kwargs)
+
